@@ -10,10 +10,11 @@ from tqdm import tqdm
 
 
 class Trainer:
-    def __init__(self, model, device, save_dir='models'):
+    def __init__(self, model, device, save_dir='models', save_best_as='best_model.pth'):
         self.model = model.to(device)
         self.device = device
         self.save_dir = save_dir
+        self.save_best_as = save_best_as
         os.makedirs(save_dir, exist_ok=True)
         self.best_val_acc = 0.0
 
@@ -51,10 +52,12 @@ class Trainer:
 
     def train(self, train_loader, val_loader, epochs, lr=0.001, phase='classifier', patience=10):
         criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
-        if phase == 'classifier':
-            optimizer = optim.Adam(self.model.backbone.fc.parameters(), lr=lr, weight_decay=1e-4)
+        # For ResNet: classifier phase trains only backbone.fc; for SmallDefectNet train all params
+        if phase == 'classifier' and hasattr(self.model, 'backbone'):
+            params = self.model.backbone.fc.parameters()
         else:
-            optimizer = optim.Adam(self.model.parameters(), lr=lr, weight_decay=1e-4)
+            params = self.model.parameters()
+        optimizer = optim.Adam(params, lr=lr, weight_decay=1e-4)
         scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.5, patience=5)
         best_val_acc = 0.0
         patience_counter = 0
@@ -70,7 +73,7 @@ class Trainer:
                     'model_state_dict': self.model.state_dict(),
                     'optimizer_state_dict': optimizer.state_dict(),
                     'val_acc': val_acc,
-                }, os.path.join(self.save_dir, 'best_model.pth'))
+                }, os.path.join(self.save_dir, self.save_best_as))
                 patience_counter = 0
             else:
                 patience_counter += 1

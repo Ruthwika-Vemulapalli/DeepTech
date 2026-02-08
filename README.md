@@ -36,26 +36,42 @@ python scripts/prepare_8class_data.py --source_dir /path/to/defect/folder --out_
 
 ## Train
 
-Same procedure as before: Phase 1 = classifier only, Phase 2 = limited fine-tuning (last 2 layers).
+**Default: small model (≤2 MB, single phase, strong regularization to avoid overfitting)**
 
 ```bash
-python train.py --data_dir data/raw
+python train.py --model small --data_dir data/raw
 ```
 
-Options: `--batch_size`, `--epochs_classifier`, `--epochs_finetune`, `--lr_classifier`, `--lr_finetune`.
+**ResNet50 (two-phase, higher accuracy, ~96 MB):**
+
+```bash
+python train.py --model resnet --data_dir data/raw
+```
+
+Options: `--model small|resnet`, `--epochs`, `--patience`, `--batch_size`, `--lr`. For ResNet: `--epochs_finetune`, `--lr_finetune`.
 
 ## Export ONNX
 
 ```bash
-python export_onnx.py
-# Output: models/defect_8class.onnx (+ .onnx.data)
+# Small model (~1.7 MB, for ≤2 MB constraint)
+python export_onnx.py --model small
+# -> models/defect_8class_small.onnx
+
+# ResNet50 (~96 MB)
+python export_onnx.py --model resnet
+# -> models/defect_8class.onnx
 ```
 
 ## Results (Phase 1)
 
-- **Test accuracy:** 82.44%
-- **Precision / Recall (weighted):** 79.76% / 82.44%
-- **Confusion matrix:** `results/confusion_matrix.png`, `results/confusion_matrix.csv`
+**ResNet50 (82% test accuracy, ~96 MB):**
+- Test accuracy: 82.44%; Precision / Recall: 79.76% / 82.44%
+- Confusion matrix: `results/confusion_matrix.png`
+
+**Small model (≤2 MB, no overfitting):**
+- Model size: **1.62 MB** (fits 2 MB limit)
+- Single-phase training; accuracy typically ~50–65% (lower than ResNet but stable)
+- Export: `python export_onnx.py --model small` → `models/defect_8class_small.onnx` (~1.7 MB)
 
 ## Project layout
 
