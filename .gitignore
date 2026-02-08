@@ -10,7 +10,6 @@ build/
 *.onnx
 *.onnx.data
 !results/
-!results/*
 data/raw/*
 !data/raw/.gitkeep
 .env
