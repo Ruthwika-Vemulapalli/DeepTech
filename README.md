@@ -95,9 +95,8 @@ DeepTech/
 
 ## Phase 1 deliverables
 
-- **Dataset plan & class design:** See `PHASE1_SLIDE_CONTENT.md` (slide 4).
-- **Baseline model & results:** ResNet50, 224×224, PyTorch; metrics and confusion matrix above (slide 5).
-- **Artifacts & links:** GitHub (mandatory), Dataset ZIP, ONNX link, optional results report (slide 6).
-- **Research & references:** 2–3 refs + dataset citation (slide 7).
+- **Dataset plan & class design:** See `PHASE1_SLIDE_CONTENT.md`
+- **Baseline model & results:** ResNet50, 224×224, PyTorch; metrics and confusion matrix above. 
+- **Artifacts & links:** GitHub (mandatory), Dataset ZIP, ONNX link, optional results report. 
+- **Research & references:** 2–3 refs + dataset citation. 
 
-Save slides as **TeamName_Phase1.pdf** (6–7 slides max).
